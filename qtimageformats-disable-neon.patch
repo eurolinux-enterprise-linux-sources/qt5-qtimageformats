@@ -1,0 +1,87 @@
+diff --git a/src/3rdparty/libwebp/src/dsp/dsp.h b/src/3rdparty/libwebp/src/dsp/dsp.h
+index 813fed4..ddc8fe4 100644
+--- a/src/3rdparty/libwebp/src/dsp/dsp.h
++++ b/src/3rdparty/libwebp/src/dsp/dsp.h
+@@ -74,11 +74,11 @@ extern "C" {
+ 
+ // The intrinsics currently cause compiler errors with arm-nacl-gcc and the
+ // inline assembly would need to be modified for use with Native Client.
+-#if (defined(__ARM_NEON__) || defined(WEBP_ANDROID_NEON) || \
+-     defined(__aarch64__) || defined(WEBP_HAVE_NEON)) && \
+-    !defined(__native_client__)
+-#define WEBP_USE_NEON
+-#endif
++// #if (defined(__ARM_NEON__) || defined(WEBP_ANDROID_NEON) || \
++//      defined(__aarch64__) || defined(WEBP_HAVE_NEON)) && \
++//     !defined(__native_client__)
++// #define WEBP_USE_NEON
++// #endif
+ 
+ #if defined(_MSC_VER) && _MSC_VER >= 1700 && defined(_M_ARM)
+ #define WEBP_USE_NEON
+diff --git a/src/3rdparty/libwebp.pri b/src/3rdparty/libwebp.pri
+index 55d7e60..6302433 100644
+--- a/src/3rdparty/libwebp.pri
++++ b/src/3rdparty/libwebp.pri
+@@ -122,32 +122,32 @@ integrity {
+     QMAKE_CFLAGS += -c99
+ }
+ 
+-equals(QT_ARCH, arm)|equals(QT_ARCH, arm64) {
+-    SOURCES_FOR_NEON += \
+-        $$PWD/libwebp/src/dsp/alpha_processing_neon.c \
+-        $$PWD/libwebp/src/dsp/dec_neon.c \
+-        $$PWD/libwebp/src/dsp/enc_neon.c \
+-        $$PWD/libwebp/src/dsp/filters_neon.c \
+-        $$PWD/libwebp/src/dsp/lossless_enc_neon.c \
+-        $$PWD/libwebp/src/dsp/lossless_neon.c \
+-        $$PWD/libwebp/src/dsp/rescaler_neon.c \
+-        $$PWD/libwebp/src/dsp/upsampling_neon.c
+-
+-    contains(QT_CPU_FEATURES.$$QT_ARCH, neon) {
+-        # Default compiler settings include this feature, so just add to SOURCES
+-        SOURCES += $$SOURCES_FOR_NEON
+-    } else {
+-        neon_comp.commands = $$QMAKE_CC -c $(CFLAGS)
+-        neon_comp.commands += $$QMAKE_CFLAGS_NEON
+-        neon_comp.commands += $(INCPATH) ${QMAKE_FILE_IN}
+-        msvc: neon_comp.commands += -Fo${QMAKE_FILE_OUT}
+-        else: neon_comp.commands += -o ${QMAKE_FILE_OUT}
+-        neon_comp.dependency_type = TYPE_C
+-        neon_comp.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_OBJ)}
+-        neon_comp.input = SOURCES_FOR_NEON
+-        neon_comp.variable_out = OBJECTS
+-        neon_comp.name = compiling[neon] ${QMAKE_FILE_IN}
+-        silent: neon_comp.commands = @echo compiling[neon] ${QMAKE_FILE_IN} && $$neon_comp.commands
+-        QMAKE_EXTRA_COMPILERS += neon_comp
+-    }
+-}
++# equals(QT_ARCH, arm)|equals(QT_ARCH, arm64) {
++#     SOURCES_FOR_NEON += \
++#         $$PWD/libwebp/src/dsp/alpha_processing_neon.c \
++#         $$PWD/libwebp/src/dsp/dec_neon.c \
++#         $$PWD/libwebp/src/dsp/enc_neon.c \
++#         $$PWD/libwebp/src/dsp/filters_neon.c \
++#         $$PWD/libwebp/src/dsp/lossless_enc_neon.c \
++#         $$PWD/libwebp/src/dsp/lossless_neon.c \
++#         $$PWD/libwebp/src/dsp/rescaler_neon.c \
++#         $$PWD/libwebp/src/dsp/upsampling_neon.c
++# 
++#     contains(QT_CPU_FEATURES.$$QT_ARCH, neon) {
++#         # Default compiler settings include this feature, so just add to SOURCES
++#         SOURCES += $$SOURCES_FOR_NEON
++#     } else {
++#         neon_comp.commands = $$QMAKE_CC -c $(CFLAGS)
++#         neon_comp.commands += $$QMAKE_CFLAGS_NEON
++#         neon_comp.commands += $(INCPATH) ${QMAKE_FILE_IN}
++#         msvc: neon_comp.commands += -Fo${QMAKE_FILE_OUT}
++#         else: neon_comp.commands += -o ${QMAKE_FILE_OUT}
++#         neon_comp.dependency_type = TYPE_C
++#         neon_comp.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_OBJ)}
++#         neon_comp.input = SOURCES_FOR_NEON
++#         neon_comp.variable_out = OBJECTS
++#         neon_comp.name = compiling[neon] ${QMAKE_FILE_IN}
++#         silent: neon_comp.commands = @echo compiling[neon] ${QMAKE_FILE_IN} && $$neon_comp.commands
++#         QMAKE_EXTRA_COMPILERS += neon_comp
++#     }
++# }

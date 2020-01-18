@@ -4,19 +4,21 @@
 %define docs 1
 
 # where to enable webp support
-%if 0%{?fedora} || 0%{?rhel} > 6
+%if 0%{?fedora} || 0%{?rhel} > 7
 %global webp 1
 %endif
 
 Summary: Qt5 - QtImageFormats component
 Name:    qt5-%{qt_module}
-Version: 5.6.2
+Version: 5.9.2
 Release: 1%{?dist}
 
 # See LGPL_EXCEPTIONS.txt, LICENSE.GPL3, respectively, for details
 License: LGPLv2 with exceptions or GPLv3 with exceptions
 Url:     http://www.qt.io
-Source0: http://download.qt.io/official_releases/qt/5.6/%{version}/submodules/%{qt_module}-opensource-src-%{version}.tar.xz
+Source0: http://download.qt.io/official_releases/qt/5.9/%{version}/submodules/%{qt_module}-opensource-src-%{version}.tar.xz
+
+Patch1:  qtimageformats-disable-neon.patch
 
 BuildRequires: qt5-qtbase-devel >= %{version}
 BuildRequires: libmng-devel
@@ -33,6 +35,9 @@ Obsoletes: qt5-qtimageformats-devel < 5.4.0
 Provides:  qt5-qtimageformats-devel = %{version}-%{release}
 
 %{?_qt5_version:Requires: qt5-qtbase%{?_isa} >= %{_qt5_version}}
+
+# filter plugin provides
+%global __provides_exclude_from ^%{_qt5_plugindir}/.*\\.so$
 
 %description
 The core Qt Gui library by default supports reading and writing image
@@ -56,28 +61,28 @@ BuildArch: noarch
 
 %prep
 %setup -q -n %{qt_module}-opensource-src-%{version}
+
+%patch1 -p1 -b .qtimageformats-disable-neon
+
 %if 0%{?webp}
 rm -rv src/3rdparty
 %endif
 
 %build
-mkdir %{_target_platform}
-pushd %{_target_platform}
-%{qmake_qt5} ..
+%{qmake_qt5}
 
 make %{?_smp_mflags}
 
 %if 0%{?docs}
 make %{?_smp_mflags} docs
 %endif
-popd
 
 
 %install
-make install INSTALL_ROOT=%{buildroot} -C %{_target_platform}
+make install INSTALL_ROOT=%{buildroot}
 
 %if 0%{?docs}
-make install_docs INSTALL_ROOT=%{buildroot} -C %{_target_platform}
+make install_docs INSTALL_ROOT=%{buildroot}
 %endif
 
 
@@ -87,7 +92,6 @@ make install_docs INSTALL_ROOT=%{buildroot} -C %{_target_platform}
 %{_qt5_plugindir}/imageformats/libqtga.so
 %{_qt5_plugindir}/imageformats/libqtiff.so
 %{_qt5_plugindir}/imageformats/libqwbmp.so
-%{_qt5_plugindir}/imageformats/libqdds.so
 %{_qt5_plugindir}/imageformats/libqicns.so
 %{_qt5_plugindir}/imageformats/libqjp2.so
 %{_qt5_plugindir}/imageformats/libqwebp.so
@@ -102,6 +106,14 @@ make install_docs INSTALL_ROOT=%{buildroot} -C %{_target_platform}
 
 
 %changelog
+* Fri Oct 06 2017 Jan Grulich <jgrulich@redhat.com> - 5.9.2-1
+- Update to 5.9.2
+  Resolves: bz#1482782
+
+* Fri Aug 18 2017 Jan Grulich <jgrulich@redhat.com> - 5.9.1-1
+- Update to 5.9.1
+  Resolves: bz#1482782
+
 * Wed Jan 11 2017 Jan Grulich <jgrulich@redhat.com> - 5.6.2-1
 - Update to 5.6.2
   Resolves: bz#1384821

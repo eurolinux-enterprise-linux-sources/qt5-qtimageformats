@@ -52,7 +52,6 @@ libraries. If not found, it may fall back on using a bundled copy (in
 
 \table
 \header \li Format \li Description                      \li Support      \li 3rd Party Codec
-\row    \li DDS    \li Direct Draw Surface              \li Read/write   \li No
 \row    \li ICNS   \li Apple Icon Image                 \li Read/write   \li No
 \row    \li JP2    \li Joint Photographic Experts Group 2000 \li Read/write   \li Yes (bundled, unmaintained)
 \row    \li MNG    \li Multiple-image Network Graphics  \li Read         \li Yes (bundled, unmaintained)
@@ -66,6 +65,10 @@ libraries. If not found, it may fall back on using a bundled copy (in
 provided for manual builds only, and not used as a fallback in case system
 libraries are unavailable.
 
+\note For security reasons, the Direct Draw Surface (DDS) handler is not built
+by default since Qt 5.8. Users who still want this handler can build it from the
+source project.
+
 \section2 Deployment
 
 When built, the Qt Image Formats plugins are located as dynamic
@@ -73,6 +76,19 @@ libraries in the runtime plugin directory (typically \c
 plugins/imageformats), together with the default image format
 plugins. They may be deployed to the target system in the same way as
 other plugins, see the \l{Deploying Plugins} documentation.
+
+\section2 Licenses and Attributions
+
+Qt Image Formats is available under commercial licenses from \l{The Qt Company}.
+In addition, it is available under the
+\l{GNU Lesser General Public License, version 3}, or
+the \l{GNU General Public License, version 2}.
+See \l{Qt Licensing} for further details.
+
+Furthermore Qt Image Formats potentially contains third party
+modules under following permissive licenses:
+
+\generatelist{groupsbymodule attributions-qtimageformats}
 
 \section2 Security considerations
 
